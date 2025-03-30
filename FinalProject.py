@@ -1,5 +1,5 @@
-import tkinter as tk
-from tkinter import messagebox, ttk
+import customtkinter as ctk
+from tkinter import messagebox
 import os
 from datetime import datetime
 
@@ -80,18 +80,19 @@ def view_records():
             messagebox.showinfo("Info", "No records found.")
             return
         # Create a new window to display records
-        view_window = tk.Toplevel()
+        view_window = ctk.CTkToplevel()
         view_window.title("All Records")
-        view_window.geometry("600x450")
+        view_window.geometry("800x600") 
         
-        text_area = tk.Text(view_window, width=70, height=20)
+        text_area = ctk.CTkTextbox(view_window, width=750, height=500) 
+        text_area.pack(expand=True, fill="both", padx=10, pady=10) 
         text_area.pack()
         # Format and display each record in the text area
         for record in records:
             id, first, middle, last, birthday, gender = record.strip().split(",")
             full_name = " ".join(filter(None, [first, middle, last]))
             formatted_birthday = format_birthday(birthday)
-            text_area.insert(tk.END, f"ID: {id}\nName: {full_name}\nBirthday: {formatted_birthday}\nGender: {gender}\n\n")
+            text_area.insert(ctk.END, f"ID: {id}\nName: {full_name}\nBirthday: {formatted_birthday}\nGender: {gender}\n\n")
     except Exception as e:
         messagebox.showerror("Error", f"Failed to read records: {e}")
         
@@ -136,29 +137,26 @@ def search_record():
         except Exception as e:
             messagebox.showerror("Error", f"Search failed: {e}")
 
-        finally:
-            search_window.destroy()
-
     # Create the search UI window
-    search_window = tk.Toplevel()
+    search_window = ctk.CTkToplevel()
     search_window.title("Search Record")
     search_window.geometry("400x250")
 
-    tk.Label(search_window, text="Choose search type:").pack()
+    ctk.CTkLabel(search_window, text="Choose search type:").pack()
 
-    search_option = tk.StringVar(value="ID")  # Default to ID search
+    search_option = ctk.StringVar(value="ID")  # Default to ID search
 
-    tk.Radiobutton(search_window, text="By ID", variable=search_option, value="ID", indicatoron=True).pack()
-    tk.Radiobutton(search_window, text="By Name", variable=search_option, value="Name", indicatoron=True).pack()
-    tk.Radiobutton(search_window, text="By Birthday", variable=search_option, value="Birthday", indicatoron=True).pack()
+    ctk.CTkRadioButton(search_window, text="By ID", variable=search_option, value="ID").pack()
+    ctk.CTkRadioButton(search_window, text="By Name", variable=search_option, value="Name").pack()
+    ctk.CTkRadioButton(search_window, text="By Birthday", variable=search_option, value="Birthday").pack()
 
-    tk.Label(search_window, text="Enter search term:").pack()
-    entry_search = tk.Entry(search_window)
+    ctk.CTkLabel(search_window, text="Enter search term:").pack()
+    entry_search = ctk.CTkEntry(search_window)
     entry_search.pack()
 
-    tk.Button(search_window, text="Search", command=perform_search).pack()
+    ctk.CTkButton(search_window, text="Search", command=perform_search).pack()
 
-
+# Function to input first name, middle name, last name, and birthday
 def sign_up():
     def submit():
         id = generate_id()
@@ -166,7 +164,7 @@ def sign_up():
         middle = entry_middle.get().strip()
         last = entry_last.get().strip()
         birthday = entry_birthday.get().strip()
-        gender = gender_var.get()
+        gender = gender_dropdown.get()
         
         # Validate the inputs
         error = validate_input(first, middle, last, birthday)
@@ -180,47 +178,52 @@ def sign_up():
         sign_up_window.destroy()
         
     # Create the Sign Up UI form
-    sign_up_window = tk.Toplevel()
+    sign_up_window = ctk.CTkToplevel()
     sign_up_window.title("Sign Up")
     sign_up_window.geometry("600x450")
     
-    tk.Label(sign_up_window, text="First Name:").pack()
-    entry_first = tk.Entry(sign_up_window)
+    ctk.CTkLabel(sign_up_window, text="First Name:").pack()
+    entry_first = ctk.CTkEntry(sign_up_window)
     entry_first.pack()
     
-    tk.Label(sign_up_window, text="Middle Name:").pack()
-    entry_middle = tk.Entry(sign_up_window)
+    ctk.CTkLabel(sign_up_window, text="Middle Name:").pack()
+    entry_middle = ctk.CTkEntry(sign_up_window)
     entry_middle.pack()
     
-    tk.Label(sign_up_window, text="Last Name:").pack()
-    entry_last = tk.Entry(sign_up_window)
+    ctk.CTkLabel(sign_up_window, text="Last Name:").pack()
+    entry_last = ctk.CTkEntry(sign_up_window)
     entry_last.pack()
     
-    tk.Label(sign_up_window, text="Birthday (YYYY-MM-DD):").pack()
-    entry_birthday = tk.Entry(sign_up_window)
+    ctk.CTkLabel(sign_up_window, text="Birthday (YYYY-MM-DD):").pack()
+    entry_birthday = ctk.CTkEntry(sign_up_window)
     entry_birthday.pack()
     
-    tk.Label(sign_up_window, text="Gender:").pack()
-    gender_var = tk.StringVar()
-    gender_dropdown = ttk.Combobox(sign_up_window, textvariable=gender_var, values=["Male", "Female", "Other"])
+    ctk.CTkLabel(sign_up_window, text="Gender:").pack()
+    gender_dropdown = ctk.CTkComboBox(sign_up_window, values=["Male", "Female", "Other"])
+    gender_dropdown.set("Male") 
     gender_dropdown.pack()
-    gender_dropdown.current(0)  # Default to first item
     
-    tk.Button(sign_up_window, text="Submit", command=submit).pack()
+    submit_button = ctk.CTkButton(sign_up_window, text="Submit", command=submit)
+    submit_button.pack(pady=15)
+    ctk.CTkButton(sign_up_window, text="Exit", command=sign_up_window.destroy).pack(pady=5)
+
     
 # Main function that builds the root GUI window
 def main():
-    root = tk.Tk()
+
+    ctk.set_appearance_mode("System") 
+    ctk.set_default_color_theme("blue") 
+    root = ctk.CTk()
     root.title("User Management System")
     root.geometry("600x450")
     
     # Main menu buttons
-    tk.Label(root, text="Welcome to the System", font=("Arial", 12)).pack(pady=10)
+    ctk.CTkLabel(root, text="Welcome to the System", font=("Arial", 20)).pack(pady=10)
     
-    tk.Button(root, text="Sign Up", width=20, command=sign_up).pack(pady=5)
-    tk.Button(root, text="View All Records", width=20, command=view_records).pack(pady=5)
-    tk.Button(root, text="Search Record", width=20, command=search_record).pack(pady=5)
-    tk.Button(root, text="Exit", width=20, command=root.quit).pack(pady=5)
+    ctk.CTkButton(root, text="Sign Up", width=200, height=50, command=sign_up, font=("Arial", 15)).pack(pady=5)
+    ctk.CTkButton(root, text="View All Records", width=200, height=50, command=view_records, font=("Arial", 15)).pack(pady=5)
+    ctk.CTkButton(root, text="Search Record", width=200, height=50, command=search_record, font=("Arial", 15)).pack(pady=5)
+    ctk.CTkButton(root, text="Exit", width=200, height=50, command=root.quit, font=("Arial", 15)).pack(pady=5)
     
     root.mainloop()
     
