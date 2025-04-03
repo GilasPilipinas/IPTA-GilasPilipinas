@@ -1,10 +1,20 @@
 import customtkinter as ctk
+from PIL import Image, ImageEnhance
 from tkinter import messagebox
 import os
 from datetime import datetime
 
 # Define the path for the records file (records.txt) in the same directory as the script
 FILE_NAME = os.path.join(os.path.dirname(__file__), "records.txt")
+
+# Load background image as a global variable
+image_path = os.path.join(os.path.dirname(__file__), "GilasPilipinas.png")
+bg_image = Image.open(image_path).convert("RGBA")
+opacity = 0.5
+alpha = ImageEnhance.Brightness(bg_image.split()[3]).enhance(opacity)
+bg_image.putalpha(alpha)
+bg_image = ctk.CTkImage(light_image=bg_image, size=(300, 300))
+
 # Function to save a new user record into the records.txt file
 def save_record(id, first, middle, last, birthday, gender):
     try:
@@ -141,6 +151,11 @@ def search_record():
     search_window = ctk.CTkToplevel()
     search_window.title("Search Record")
     search_window.geometry("400x250")
+    search_window.attributes('-topmost', True)  # Keep the window on top
+
+    # Add background image
+    bg_label = ctk.CTkLabel(search_window, image=bg_image, text="")
+    bg_label.place(relwidth=1, relheight=1)
 
     ctk.CTkLabel(search_window, text="Choose search type:").pack()
 
@@ -181,7 +196,12 @@ def sign_up():
     sign_up_window = ctk.CTkToplevel()
     sign_up_window.title("Sign Up")
     sign_up_window.geometry("600x450")
+    sign_up_window.attributes('-topmost', True)  # Keep the window on top
     
+    # Add background image
+    bg_label = ctk.CTkLabel(sign_up_window, image=bg_image, text="")
+    bg_label.place(relwidth=1, relheight=1)
+
     ctk.CTkLabel(sign_up_window, text="First Name:").pack()
     entry_first = ctk.CTkEntry(sign_up_window)
     entry_first.pack()
@@ -210,21 +230,25 @@ def sign_up():
     
 # Main function that builds the root GUI window
 def main():
-
-    ctk.set_appearance_mode("System") 
-    ctk.set_default_color_theme("blue") 
+    ctk.set_appearance_mode("System")
+    ctk.set_default_color_theme("blue")
+    
     root = ctk.CTk()
     root.title("User Management System")
     root.geometry("600x450")
-    
-    # Main menu buttons
-    ctk.CTkLabel(root, text="Welcome to the System", font=("Arial", 20)).pack(pady=10)
+
+    # Add background image to the root window
+    bg_label = ctk.CTkLabel(root, image=bg_image, text="")  
+    bg_label.place(relwidth=1, relheight=1)
+
+    # Place other widgets on top of the background
+    ctk.CTkLabel(root, text="Welcome to the Gilas Pilipinas", font=("Arial", 20)).pack(pady=10)
     
     ctk.CTkButton(root, text="Sign Up", width=200, height=50, command=sign_up, font=("Arial", 15)).pack(pady=5)
     ctk.CTkButton(root, text="View All Records", width=200, height=50, command=view_records, font=("Arial", 15)).pack(pady=5)
     ctk.CTkButton(root, text="Search Record", width=200, height=50, command=search_record, font=("Arial", 15)).pack(pady=5)
     ctk.CTkButton(root, text="Exit", width=200, height=50, command=root.quit, font=("Arial", 15)).pack(pady=5)
-    
+
     root.mainloop()
     
 # Run the main function when the script is executed
